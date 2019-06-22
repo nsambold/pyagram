@@ -1,5 +1,4 @@
 
-x=locals()
 def g(y):
     b = 2
     return y + 1

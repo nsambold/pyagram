@@ -18,9 +18,6 @@ def f():
 c = f()
 """
 
-import linecache
-print(linecache.getline(__file__, 2))
-
 test2 = """
 def f():
     a = 1
@@ -38,13 +35,29 @@ f()
 
 
 test3 = """
-x=locals()
 def g(y):
     b = 2
     return y + 1
 def h(q):
     return q - 1
 g(h(7))
+"""
+
+testnonlocal = """
+def f():
+    x = 3
+    def g():
+        nonlocal x
+        x = 'a'
+    g()
+f()
+"""
+
+testlambda = """
+def f():
+    x = lambda y: y(1)
+    return x(lambda q: q * 10)
+f()
 """
 
 #
