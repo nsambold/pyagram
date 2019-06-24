@@ -1,7 +1,8 @@
 
-def g(y):
-    b = 2
-    return y + 1
-def h(q):
-    return q - 1
-g(h(7))
+def f():
+    def g(a):
+        b = lambda : a
+        return b
+    q = g(1)
+    w = g(2)
+f()

@@ -1,4 +1,6 @@
-first = dict.copy(globals())
+# first = dict.copy(globals())
+import sys
+default = sys._getframe().f_locals
 import bdb, inspect, ast
 import test
 
@@ -10,26 +12,34 @@ def stringtofile(str):
     return f
 
 
-class printvars(bdb.Bdb):
-    def user_call(self, frame, args):
-        print(globals())
-
-    def user_line(self, frame):
-        print(globals())
-
-    def user_return(self, frame, value):
-        print(globals())
-
-    def user_exception(self, frame, exception):
-        print(globals())
+# class printvars(bdb.Bdb):
+#     def user_call(self, frame, args):
+#         print(globals())
+#
+#     def user_line(self, frame):
+#         print(globals())
+#
+#     def user_return(self, frame, value):
+#         print(globals())
+#
+#     def user_exception(self, frame, exception):
+#         print(globals())
 
 class pyagram(bdb.Bdb):
     # natural = {'__name__': '__main__', '__doc__': None, '__package__': None, '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x107b1d080>, '__spec__': None, '__annotations__': {}, '__builtins__': <module 'builtins' (built-in)>, '__file__': 'firstpyagram.py', '__cached__': None}
-    glst = {}
-    diclen = 0
-    llst = {}
+    # glst = {}
+    # diclen = 0
+    # llst = {}
 
-    
+    def __init__(self):
+        bdb.Bdb.__init__(self)
+        self.framedict = {} # maps frame num the most recent instance of that frame
+        self.idmap = {} # maps frame id to frame num
+        self.framecount = 0
+        self.curframe = 0 # key or the current frame
+        self.prevframe = 0 # key of the frame that called the current frame
+        self.funcs = {}
+        self.lambdas = {}
 
     def linegetter(self, ln):
         import linecache
@@ -37,50 +47,72 @@ class pyagram(bdb.Bdb):
         line = linecache.getline(fn, ln)
         return line
 
-
     def user_func(self, frame):
         # print(frame.f_locals)
         # print(frame.f_globals)
+        print(id(frame))
+        self.updateframes(frame)
         import linecache
+        # astnode = ast.parse(test.test1)
+        self.printframes()
+        # self.printvars(frame)
         line = self.linegetter(frame.f_lineno)
-        astnode = ast.parse(test.test1)
         print("line {}:".format(frame.f_lineno), line)
-        self.printvars(frame)
+
+    def funcID(self, function):
+        # TODO: create a function that gives non built in functions IDs to be
+        return id(function)
+
+    def updateframes(self, frame):
+        # TODO: update the framedict variable to have the frame number map to dictionaries
+        #       of the defined variables in that specific frame
+        if not self.framedict:
+            self.framedict[0] = frame
+            self.idmap[id(frame)] = 0
+        elif self.framecount >= len(self.framedict):
+            self.framedict[self.framecount] = frame
+            self.idmap[id(frame)] = self.framecount
+        else:
+            # print(self.framecount, len(self.framedict))
+            self.framedict[self.idmap[id(frame)]] = frame
 
 
+            # alreadyin = False
+            # for num, f in self.framedict.items():
+            #     if id(frame) == id(f):
+            #         self.framedict[num] = frame
+            #         True
+            # if not alreadyin:
+            #     self.framedict[self.framecount] = frame
+            #     self.framecount += 1
+
+
+    def printframes(self):
+        for num, frame in self.framedict.items():
+            qwer = {k: v for k, v in frame.f_locals.items() if k not in default}
+            print(num, qwer, id(frame))
 
     def printvars(self, frame):
-        # print(frame.f_locals)
+        # TODO: update to print variables within their corresponding frames
+
         d = dict.copy(frame.f_locals)
         for key, val in d.items():
             if key == "__" + key[2:-2] + "__":
                 continue
             elif inspect.isfunction(val):
-                print(key, val.__name__, val)
+                print(key, val.__name__, repr(val))
                 # funcname = val.__name__
                 # parent =
                 # args = inspect.
                 # flag = [funcname, ]
             else:
-                print(key, val)
+                print(key, repr(val))
 
     def user_call(self, frame, args):
-
-        # print("\n-------------------------", frame.f_globals['x'], "\n")
+        self.framecount += 1
+        # self.curframe =
         print("user_call")
         self.user_func(frame)
-
-        # print(frame.f_locals)
-        # print(frame.f_globals)
-        # import linecache
-        # line = linegetter(frame)
-        # astnode = ast.parse(test.test1)
-        # # print(fn, frame.f_lineno, frame.f_globals)
-        # print("user_call: \n", line)
-        # print('locals:', frame.f_locals)
-        # print('\nframe info:', inspect.getframeinfo(frame))
-        #print('\narg spec:', inspect.formatargspec(*inspect.getfullargspec(f)))
-        # don't have a function to call formateargspec on
 
     def user_line(self, frame):
         print("user_line")
@@ -88,7 +120,8 @@ class pyagram(bdb.Bdb):
         self.user_func(frame)
 
     def user_return(self, frame, value):
-        print("user_return")
+        # self.curframe =
+        print("user_return", frame.f_back in self.framedict)
         self.user_func(frame)
 
     def user_exception(self, frame, exception):
@@ -96,11 +129,12 @@ class pyagram(bdb.Bdb):
         self.user_func(frame)
 
 # print(first)
-
+temp = {'__name__': '__main__', '__doc__': None, '__package__': None, '__spec__': None, '__annotations__': {}, '__cached__': None}
 t = pyagram()
-inputfile = stringtofile(test.test3)
+inputfile = stringtofile(test.multframes)
 string = inputfile.read()
-t.run(string, first)
+
+t.run(string, temp, temp)
 
 
 
@@ -126,6 +160,17 @@ class Tdb(Bdb):
         self.set_continue()
 """
 
+# print(frame.f_locals) # taken from user_call
+# print(frame.f_globals)
+# import linecache
+# line = linegetter(frame)
+# astnode = ast.parse(test.test1)
+# # print(fn, frame.f_lineno, frame.f_globals)
+# print("user_call: \n", line)
+# print('locals:', frame.f_locals)
+# print('\nframe info:', inspect.getframeinfo(frame))
+#print('\narg spec:', inspect.formatargspec(*inspect.getfullargspec(f)))
+# don't have a function to call formateargspec on
 
 #
 # def dicchange(self, curframe1234):

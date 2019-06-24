@@ -1,3 +1,33 @@
+## firstpyagram.py TODOs:
+
+1. organize all variables by frame (`framedict = {} #keys are frame count`)
+
+   - maybe create new id to each specific frame which 
+     - the built in id funtion returns the same id for different frames of the same function call
+     - In order to solve this
+
+2. be able to store the parents of functions.
+
+   - either from the function object itself(`func.parent() #returns parent`) or by storing when it was created(`funcdict[func] = parent`)
+
+3. be able to distinguish between global(nonlocal) or regular variables
+
+   <ul>
+     <li> could check if the variable in the current and parent frame change at the same time</li>
+   </ul>
+
+4. be able to distinguish between multiple lambdas
+
+   + ask Sequioa if he has a solution or look at python tutor for their solution
+
+
+
+
+
+
+
+
+
 # Short-term
 
 Current task: Add basic support for flags and frames. (See `Features.md`/"Bare bones".)
