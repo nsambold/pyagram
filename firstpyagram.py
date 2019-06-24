@@ -5,10 +5,10 @@ import bdb, inspect, ast
 import test
 
 def stringtofile(str):
-    f = open("input2.py", "w")
+    f = open("userinput.py", "w")
     f.write(str)
     f.close()
-    f = open("input2.py", "r")
+    f = open("userinput.py", "r")
     return f
 
 
