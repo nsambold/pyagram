@@ -64,8 +64,10 @@ class pyagram(bdb.Bdb):
         return id(function)
 
     def updateframes(self, frame):
-        # TODO: update the framedict variable to have the frame number map to dictionaries
-        #       of the defined variables in that specific frame
+        # TODO: check if this function works for tests other than multframes
+        #
+        # DONE(6/23/19): update the framedict variable to have the frame number
+        #   map to dictionaries of the defined variables in that specific frame
         if not self.framedict:
             self.framedict[0] = frame
             self.idmap[id(frame)] = 0
@@ -75,16 +77,6 @@ class pyagram(bdb.Bdb):
         else:
             # print(self.framecount, len(self.framedict))
             self.framedict[self.idmap[id(frame)]] = frame
-
-
-            # alreadyin = False
-            # for num, f in self.framedict.items():
-            #     if id(frame) == id(f):
-            #         self.framedict[num] = frame
-            #         True
-            # if not alreadyin:
-            #     self.framedict[self.framecount] = frame
-            #     self.framecount += 1
 
 
     def printframes(self):
