@@ -1,22 +1,58 @@
-## firstpyagram.py TODOs:
+#  firstpyagram.py TODOs:
 
-1. organize all variables by frame (`framedict = {} #keys are frame count`)
+## 1. frames and variables
 
-   - maybe create new id to each specific frame which 
-     - the built in id funtion returns the same id for different frames of the same function call
-     - In order to solve this
+organize all variables by frame (`framedict = {} #keys are frame count`)
 
-2. be able to store the parents of functions.
+- maybe create new id to each specific frame which 
 
-   - either from the function object itself(`func.parent() #returns parent`) or by storing when it was created(`funcdict[func] = parent`)
+- the built in id funtion returns the same id for different frames of the same function call
 
-3. be able to distinguish between global(nonlocal) or regular variables
+- need to add in the return value for frames # done
 
-   <ul>
-     <li> could check if the variable in the current and parent frame change at the same time</li>
-   </ul>
+  
 
-4. be able to distinguish between multiple lambdas
+##2. functions and representation
+
+be able to store the parents of functions.
+
+- either from the function object itself(`func.parent() #returns parent`) or by storing when it was created(`funcdict[func] = parent`)
+- maybe a seperate method for printing functions could be invoked within the print frames method when it comes across a function(this printFunction method could also be used to keep track of lambdas!)
+- need to be able to represent user defined and built in functions differnetly
+  - ex: def f() is different than f = print
+- 
+
+
+
+## 3. Objects and representation
+
+need to be able to represent the class atributes and variables of user defined objects
+
+
+
+inspect.getmembers(Dog)[2] will return the \_\_dict\_\_ of the Dog class which holds information like class variables and other stuff
+
+
+
+
+
+## 3. knowing when to display/discard past frames
+
+In the case where a function is called and none of the variables in that frame are needed outside the frame we need to know do discard/not display that frame
+
+
+
+## 3. global/nonlocal keywords
+
+be able to distinguish between global(nonlocal) or regular variables
+
+<ul>
+  <li> could check if the variable in the current and parent frame change at the same time</li>
+</ul>
+
+## 4. lambdas
+
+1. be able to distinguish between multiple lambdas
 
    + ask Sequioa if he has a solution or look at python tutor for their solution
 

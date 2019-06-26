@@ -25,7 +25,20 @@ def stringtofile(str):
 #     def user_exception(self, frame, exception):
 #         print(globals())
 
-class pyagram(bdb.Bdb):
+class Func():
+    # TODO: finish this class as an easy way to store
+    #       and print functions in the pyagram class
+    def __init__(self, f):
+        self.f = f
+
+    def getparent(self):
+        pass
+    def getsig(self):
+        pass
+
+
+
+class Pyagram(bdb.Bdb):
     # natural = {'__name__': '__main__', '__doc__': None, '__package__': None, '__loader__': <_frozen_importlib_external.SourceFileLoader object at 0x107b1d080>, '__spec__': None, '__annotations__': {}, '__builtins__': <module 'builtins' (built-in)>, '__file__': 'firstpyagram.py', '__cached__': None}
     # glst = {}
     # diclen = 0
@@ -35,6 +48,7 @@ class pyagram(bdb.Bdb):
         bdb.Bdb.__init__(self)
         self.framedict = {} # maps frame num the most recent instance of that frame
         self.idmap = {} # maps frame id to frame num
+        self.returnvalues = {}
         self.framecount = 0
         self.curframe = 0 # key or the current frame
         self.prevframe = 0 # key of the frame that called the current frame
@@ -43,18 +57,18 @@ class pyagram(bdb.Bdb):
 
     def linegetter(self, ln):
         import linecache
-        fn = 'input2.py'
+        fn = 'userinput.py'
         line = linecache.getline(fn, ln)
         return line
 
     def user_func(self, frame):
         # print(frame.f_locals)
         # print(frame.f_globals)
-        print(id(frame))
+        # print(id(frame))
         self.updateframes(frame)
         import linecache
         # astnode = ast.parse(test.test1)
-        self.printframes()
+        self.printall()
         # self.printvars(frame)
         line = self.linegetter(frame.f_lineno)
         print("line {}:".format(frame.f_lineno), line)
@@ -63,7 +77,11 @@ class pyagram(bdb.Bdb):
         # TODO: create a function that gives non built in functions IDs to be
         return id(function)
 
+    def updatefun
+
     def updateframes(self, frame):
+        # TODO: add in the return values in the frames
+        #       this might need to be done inside of the user_return function
         # TODO: check if this function works for tests other than multframes
         #
         # DONE(6/23/19): update the framedict variable to have the frame number
@@ -78,11 +96,20 @@ class pyagram(bdb.Bdb):
             # print(self.framecount, len(self.framedict))
             self.framedict[self.idmap[id(frame)]] = frame
 
+    def printframe(self, frame):
+        lcls = frame.f_locals
+        for var, binding in lcls.items():
+            print(var, binding)
 
     def printframes(self):
         for num, frame in self.framedict.items():
             qwer = {k: v for k, v in frame.f_locals.items() if k not in default}
             print(num, qwer, id(frame))
+
+    def printall(self): # basicly just printframes but it also prints the return value
+        for num, frame in self.framedict.items():
+            qwer = {k: v for k, v in frame.f_locals.items() if k not in default}
+            print(num, qwer, id(frame), repr(self.returnvalues[num]) if self.returnvalues.get(num, False) else "") # , "" if not num else repr(self.returnvalues[num])
 
     def printvars(self, frame):
         # TODO: update to print variables within their corresponding frames
@@ -100,6 +127,9 @@ class pyagram(bdb.Bdb):
             else:
                 print(key, repr(val))
 
+    def printfunction(self, function):
+        pass
+
     def user_call(self, frame, args):
         self.framecount += 1
         # self.curframe =
@@ -112,8 +142,20 @@ class pyagram(bdb.Bdb):
         self.user_func(frame)
 
     def user_return(self, frame, value):
+        # TODO: coordinate with updateframes function the addition of
+        #       return values in frames storred ad __return__
+        #
+        #       maybe could do this by simply adding the R.V. on to the
+        #       variable bindings in framedict (but how?) A: just do it
+
         # self.curframe =
-        print("user_return", frame.f_back in self.framedict)
+        if self.framedict[0] != frame: # might have to do frame.f_back or something
+            # print(id(frame) in self.idmap.keys())
+            self.returnvalues[self.idmap[id(frame)]] = value
+            # self.framedict[self.idmap[id(frame)]].RV = value # add in the frame number
+            # need to change the key where 'self.idmap[frame]' is to make it not error!
+
+        print("user_return", repr(value)) #, frame.f_back in self.framedict
         self.user_func(frame)
 
     def user_exception(self, frame, exception):
@@ -122,8 +164,8 @@ class pyagram(bdb.Bdb):
 
 # print(first)
 temp = {'__name__': '__main__', '__doc__': None, '__package__': None, '__spec__': None, '__annotations__': {}, '__cached__': None}
-t = pyagram()
-inputfile = stringtofile(test.multframes)
+t = Pyagram()
+inputfile = stringtofile(test.testnested)
 string = inputfile.read()
 
 t.run(string, temp, temp)

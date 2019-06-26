@@ -11,6 +11,29 @@ f(g(2), h(3))
 f(h(g(2)))
 """
 
+testrepr = """
+class C():
+    __repr__(self):
+        x = 1
+        def f():
+            x = 2
+            return x
+        a = f()
+        return "hi"
+c = C()
+print(c)
+"""
+
+testobject = """
+class Dog():
+    numdogs = 0
+    def __init__(self, height):
+        self.height = height
+        Dog.numdogs += 1
+bigdog = Dog(100)
+smalldog = Dog(5)
+"""
+
 testrecursion = """
 def f(x):
     if (x < 0):
@@ -58,8 +81,6 @@ def f():
     b = 2
     c = "3"
     d = lambda x: x
-    print(globals())
-    e = f
     f = print("hi")
     g = [1, d, 3]
     print(locals())
