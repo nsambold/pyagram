@@ -1,5 +1,9 @@
 #  firstpyagram.py TODOs:
 
+## change string input to AST
+
+right now have input as a string from a file but in the final product we need to have an AST as the input to construct the flags
+
 ## 1. frames and variables
 
 organize all variables by frame (`framedict = {} #keys are frame count`)

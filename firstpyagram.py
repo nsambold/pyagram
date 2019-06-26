@@ -77,7 +77,7 @@ class Pyagram(bdb.Bdb):
         # TODO: create a function that gives non built in functions IDs to be
         return id(function)
 
-    def updatefun
+    # def updatefun()
 
     def updateframes(self, frame):
         # TODO: add in the return values in the frames
@@ -109,7 +109,7 @@ class Pyagram(bdb.Bdb):
     def printall(self): # basicly just printframes but it also prints the return value
         for num, frame in self.framedict.items():
             qwer = {k: v for k, v in frame.f_locals.items() if k not in default}
-            print(num, qwer, id(frame), repr(self.returnvalues[num]) if self.returnvalues.get(num, False) else "") # , "" if not num else repr(self.returnvalues[num])
+            print(num, qwer, id(frame), repr(self.returnvalues[num]) if num in self.returnvalues.keys() else "") # , "" if not num else repr(self.returnvalues[num])     #.get(num, False)
 
     def printvars(self, frame):
         # TODO: update to print variables within their corresponding frames
