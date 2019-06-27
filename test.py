@@ -13,7 +13,7 @@ f(h(g(2)))
 
 testrepr = """
 class C():
-    __repr__(self):
+    def __repr__(self):
         x = 1
         def f():
             x = 2

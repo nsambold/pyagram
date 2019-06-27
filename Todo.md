@@ -1,5 +1,7 @@
 #  firstpyagram.py TODOs:
 
+change the temp dictionary(the input into t.run) to something better
+
 ## change string input to AST
 
 right now have input as a string from a file but in the final product we need to have an AST as the input to construct the flags

@@ -165,10 +165,10 @@ class Pyagram(bdb.Bdb):
 # print(first)
 temp = {'__name__': '__main__', '__doc__': None, '__package__': None, '__spec__': None, '__annotations__': {}, '__cached__': None}
 t = Pyagram()
-inputfile = stringtofile(test.testnested)
+inputfile = stringtofile(test.testrepr)
 string = inputfile.read()
 
-t.run(string, temp, temp)
+t.run(string, {}, {})
 
 
 
